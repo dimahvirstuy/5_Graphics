@@ -6,6 +6,48 @@
 #include "draw.h"
 #include "matrix.h"
 
+/*======== void add_circle() ==========
+  Inputs:   struct matrix * points
+            double cx
+            double cy
+            double r
+            double step
+  Returns:
+
+  Adds the circle at (cx, cy) with radius r to points
+  ====================*/
+void add_circle( struct matrix * points,
+                 double cx, double cy, double cz,
+                 double r, double step ) {
+}
+
+/*======== void add_curve() ==========
+Inputs:   struct matrix *points
+         double x0
+         double y0
+         double x1
+         double y1
+         double x2
+         double y2
+         double x3
+         double y3
+         double step
+         int type
+Returns:
+
+Adds the curve bounded by the 4 points passsed as parameters
+of type specified in type (see matrix.h for curve type constants)
+to the matrix points
+====================*/
+void add_curve( struct matrix *points, 
+                double x0, double y0, 
+                double x1, double y1, 
+                double x2, double y2, 
+                double x3, double y3, 
+                double step, int type ) {
+}
+
+
 /*======== void add_point() ==========
 Inputs:   struct matrix * points
          int x

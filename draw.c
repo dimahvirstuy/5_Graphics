@@ -5,13 +5,14 @@
 #include "display.h"
 #include "draw.h"
 #include "matrix.h"
+#include <math.h>
 
 /*======== void add_circle() ==========
   Inputs:   struct matrix * points
-            double cx
-            double cy
-            double r
-            double step
+  double cx
+  double cy
+  double r
+  double step
   Returns:
 
   Adds the circle at (cx, cy) with radius r to points
@@ -19,10 +20,17 @@
 void add_circle( struct matrix * points,
                  double cx, double cy, double cz,
                  double r, double step ) {
-  double inc = (2 * M_PI)/step; double i;
-  add_point(points, cx + r, cy, cz);
-  for (i = inc; i <= 2 * M_PI; i += inc) {
-    add_point(points, cx + r*cos(i), cy + r*sin(i), cz);
+  double x0,y0,x1,y1,t;
+  t=0; step*=1000;
+  x0=r*cos(t/1000*2*M_PI)+cx;
+  y0=r*sin(t/1000*2*M_PI)+cy;
+  while (t<=1000) {
+    t+=step;
+    x1=r*cos(t/1000*2*M_PI)+cx;
+    y1=r*sin(t/1000*2*M_PI)+cy;
+    add_edge(points,x0,y0,0,x1,y1,0);
+    x0=x1;
+    y0=y1;
   }
 }
 
@@ -52,9 +60,24 @@ void add_curve( struct matrix *points,
                 double step, int type ) {
   struct matrix * x = generate_curve_coefs(x0, x1, x2, x3, type);
   struct matrix * y = generate_curve_coefs(y0, y1, y2, y3, type);
-  
+  double t=0;
+  step*=1000;
+  double tx0,ty0,tx1,ty1;
 
-					   
+  tx0=x0;
+  ty0=y0;
+  
+  while (t<=1000) {
+    t+=step;
+    tx1=(x->m[0][0])*pow(t/1000,3)+(x->m[1][0])*pow(t/1000,2)+(x->m[2][0])*(t/1000)+x->m[3][0];
+    ty1=(y->m[0][0])*pow(t/1000,3)+(y->m[1][0])*pow(t/1000,2)+(y->m[2][0])*(t/1000)+y->m[3][0];
+    add_edge(points,tx0,ty0,0,tx1,ty1,0);
+
+    tx0=tx1;
+    ty0=ty1;
+  }    
+  free_matrix(x);
+  free_matrix(y);
 }
 
 

@@ -16,7 +16,6 @@ Inputs:   char * filename
           struct matrix * pm,
           screen s
 Returns: 
-
 Goes through the file named filename and performs all of the actions listed in that file.
 The file follows the following format:
      Every command is a single character that takes up a line
@@ -28,7 +27,6 @@ The file follows the following format:
    takes 8 arguments (x0, y0, x1, y1, rx0, ry0, rx1, ry1)
 	 bezier: add a bezier curve to the edge matrix -
 	    takes 8 arguments (x0, y0, x1, y1, x2, y2, x3, y3)
-
          line: add a line to the edge matrix - 
 	    takes 6 arguemnts (x0, y0, z0, x1, y1, z1)
 	 ident: set the transform matrix to the identity matrix - 
@@ -49,10 +47,7 @@ The file follows the following format:
 	    save the screen to a file -
 	    takes 1 argument (file name)
 	 quit: end parsing
-
 See the file script for an example of the file format
-
-
 IMPORTANT MATH NOTE:
 the trig functions int math.h use radian mesure, but us normal
 humans use degrees, so the file will contain degrees for rotations,
@@ -81,11 +76,11 @@ void parse_file ( char * filename,
     line[strlen(line)-1]='\0';
     //printf(":%s:\n",line);
 
-    double xvals[3];
-    double yvals[3];
+    double xvals[4];
+    double yvals[4];
     double zvals[4];
     struct matrix *tmp;
-    double theta;
+    double theta, radius;
     char axis;
     
     if ( strncmp(line, "line", strlen(line)) == 0 ) {
@@ -167,6 +162,28 @@ void parse_file ( char * filename,
       draw_lines(edges, s, c);
       save_extension(s, line);
     }//end save
+
+    else if (strncmp(line, "circle", strlen(line))==0) {
+      fgets(line, sizeof(line), f);
+      *strchr(line, '\n')=0;
+      sscanf(line, "%lf %lf %lf %lf",xvals, yvals, zvals, &radius);
+      add_circle(edges, *xvals, *yvals, *zvals, radius, .01);
+    }
+
+    else if (strncmp(line, "hermite", strlen(line))==0) {
+      fgets(line, sizeof(line), f);
+      *strchr(line, '\n')=0;
+      sscanf(line, "%lf %lf %lf %lf %lf %lf %lf %lf",xvals, yvals, xvals+1, yvals+1, xvals+2, yvals+2, xvals+3, yvals+3);
+      add_curve(edges, xvals[0],yvals[0],xvals[1],yvals[1],xvals[2],yvals[2],xvals[3],yvals[3],.01,HERMITE);
+
+    }
+
+    else if (strncmp(line, "bezier", strlen(line))==0) {
+      fgets(line, sizeof(line), f);
+      *strchr(line, '\n')=0;
+      sscanf(line, "%lf %lf %lf %lf %lf %lf %lf %lf",xvals, yvals, xvals+1, yvals+1, xvals+2, yvals+2, xvals+3, yvals+3);
+      add_curve(edges, xvals[0],yvals[0],xvals[1],yvals[1],xvals[2],yvals[2],xvals[3],yvals[3],.01,BEZIER);
+    }
 
   }
 }
